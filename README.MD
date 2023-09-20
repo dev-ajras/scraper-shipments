@@ -24,6 +24,9 @@ This console application is designed to retrieve shipping information interactiv
 - npm install
 - yarn install
 
+3. Rename the `.env.example` file in the project root to `.env`.
+4. Open the newly created `.env` file and set the value of the `URL` variable to the desired website URL or the URL of the shipping database.
+
 ## How to Run
 
 1. Navigate to the project directory in your terminal.
