@@ -1,5 +1,6 @@
 import { Browser, chromium } from "playwright";
 import { getMbl } from "../utils/getMbl";
+import { CONTAINER_NOT_FOUND, MBL_NOT_VALID } from "../messages";
 export class ShipmentTracker {
   private baseUrl: string = process.env.URL || "";
 
@@ -23,9 +24,14 @@ export class ShipmentTracker {
       );
     await element.click();
     await page.getByPlaceholder("Enter Your Reference Number").fill(mbl);
+    await page.getByText("Search").click();
+    await page.waitForLoadState("networkidle");
+    const loaded = await page.getByText("See more").isVisible();
 
+    if (!loaded) {
+      throw new Error(MBL_NOT_VALID);
+    }
     const divisions = [
-      "Search",
       "See more",
       "Container",
       "Other References",
@@ -45,8 +51,7 @@ export class ShipmentTracker {
     const mblShipment = getMbl(shipmentContainers!);
 
     if (!mblShipment.includes(container)) {
-      throw new Error("Container not found in this shipment.");
-      process.exit(121);
+      throw new Error(CONTAINER_NOT_FOUND);
     }
 
     await page.getByText("Shipment Status History").click();
